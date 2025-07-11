@@ -5,8 +5,10 @@ layout (location = 1) in vec3 VertexColor;
 
 out vec3 Color;
 
+uniform float scr_aspect;
+
 void main()
-{
-	gl_Position = vec4(VertexPos.xyz, 1.0);
+{ 
+	gl_Position = vec4(VertexPos.x*scr_aspect, VertexPos.yz, 1.0);
 	Color = VertexColor;
 }

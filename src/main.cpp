@@ -35,9 +35,15 @@ int main()
 	// triangle coords
 	float vertices[] = {
 		// positions          // colors
-		 0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, // bottom left
-		 0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f  // top
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, // left top
+		-0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, // left bottom
+		 0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, // right bottom
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f  // right top
+	};
+
+	unsigned int indices[] = {
+		0, 1, 2,
+		0, 2, 3
 	};
 
 	// vertex array
@@ -56,6 +62,11 @@ int main()
 	// color
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	unsigned int EBO;
+	glCreateBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// read shaders
 	std::string vertexCode;
@@ -130,8 +141,6 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	glUseProgram(shaderProgram);
-
 	while (!glfwWindowShouldClose(window))
 	{
 		// input
@@ -143,7 +152,13 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glUseProgram(shaderProgram);
+
+		int uni_loc = glGetUniformLocation(shaderProgram, "scr_aspect");
+		glUniform1f(uni_loc, (float)SCR_HEIGHT / SCR_WIDTH);
+
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
