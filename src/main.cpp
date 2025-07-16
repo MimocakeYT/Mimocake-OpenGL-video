@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image/stb_image.h"
 
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
@@ -34,11 +36,11 @@ int main()
 
 	// triangle coords
 	float vertices[] = {
-		// positions          // colors
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, // left top
-		-0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, // left bottom
-		 0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, // right bottom
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f  // right top
+		// positions          // colors          // tex coords
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,  0.0f, 0.0f, // left top
+		-0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,  0.0f, 1.0f, // left bottom
+		 0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  1.0f, 1.0f, // right bottom
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  1.0f, 0.0f  // right top
 	};
 
 	unsigned int indices[] = {
@@ -57,11 +59,14 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	// position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	// color
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
+	// texture coords
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(6*sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 	unsigned int EBO;
 	glCreateBuffers(1, &EBO);
@@ -141,6 +146,23 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	// texture
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(RESOURCES_PATH"textures/brick.png", &width, &height, &nrChannels, 0);
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		// input
@@ -167,6 +189,7 @@ int main()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteProgram(shaderProgram);
+	glDeleteTextures(1, &texture);
 
 	glfwTerminate();
 
