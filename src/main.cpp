@@ -1,13 +1,35 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image/stb_image.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
+
+// camera things
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 1.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+float deltaTime = 0.0f; // Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
+
+bool firstMouse = true;
+float pitch = 0;
+float yaw = -90;
+float lastX = SCR_WIDTH / 2.0;
+float lastY = SCR_HEIGHT / 2.0;
 
 int main()
 {
@@ -25,6 +47,8 @@ int main()
 	}
 	glfwSetWindowPos(window, 150, 150);
 	glfwMakeContextCurrent(window);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -156,6 +180,8 @@ int main()
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	else
 	{
@@ -169,7 +195,26 @@ int main()
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
 
-		// render
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame; // time between frames
+		lastFrame = currentFrame;
+
+		const float cameraSpeed = 3 * deltaTime; 
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
+			cameraPos += cameraSpeed * cameraFront; // forward
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			cameraPos -= cameraSpeed * cameraFront; // back
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) // left
+			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) // right
+			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) // up
+			cameraPos += cameraUp * cameraSpeed;
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || 
+			glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) // down
+			cameraPos -= cameraUp * cameraSpeed;
+
+		// clear
 		glClearColor(42.0f/255, 42.0f/255, 53.0f/255, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -177,8 +222,22 @@ int main()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glUseProgram(shaderProgram);
 
-		int uni_loc = glGetUniformLocation(shaderProgram, "scr_aspect");
-		glUniform1f(uni_loc, (float)SCR_HEIGHT / SCR_WIDTH);
+		// model matrix
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
+		model *= glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));
+
+		// view matrix
+		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
+		// projection matrix
+		glm::mat4 proj = glm::perspective(glm::radians(70.0f), (float)SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
+
+		int uni_model = glGetUniformLocation(shaderProgram, "model");
+		int uni_view = glGetUniformLocation(shaderProgram, "view");
+		int uni_proj = glGetUniformLocation(shaderProgram, "proj");
+		glUniformMatrix4fv(uni_model, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -188,10 +247,48 @@ int main()
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
 	glDeleteTextures(1, &texture);
 
 	glfwTerminate();
 
 	return 0;
+}
+
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
+	float xpos = xposIn;
+	float ypos = yposIn;
+
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	lastX = xpos;
+	lastY = ypos;
+
+	float sensitivity = 0.1f; 
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraFront = glm::normalize(front);
 }
