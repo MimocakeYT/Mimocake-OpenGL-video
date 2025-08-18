@@ -57,19 +57,28 @@ int main()
 	}
 
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+	glEnable(GL_DEPTH_TEST);
 
 	// triangle coords
 	float vertices[] = {
-		// positions          // colors          // tex coords
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,  0.0f, 0.0f, // left top
-		-0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,  0.0f, 1.0f, // left bottom
-		 0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  1.0f, 1.0f, // right bottom
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  1.0f, 0.0f  // right top
+		// position           // color
+		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f
 	};
 
 	unsigned int indices[] = {
-		0, 1, 2,
-		0, 2, 3
+		0, 1, 4, 1, 5, 4, // bottom
+		2, 7, 3, 2, 6, 7, // top
+		0, 6, 2, 0, 4, 6, // front
+		1, 3, 7, 1, 5, 7, // back
+		0, 2, 3, 0, 3, 1, // left
+		4, 7, 6, 4, 5, 7  // right
 	};
 
 	// vertex array
@@ -83,14 +92,11 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	// position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	// color
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
-	// texture coords
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(6*sizeof(float)));
-	glEnableVertexAttribArray(2);
 
 	unsigned int EBO;
 	glCreateBuffers(1, &EBO);
@@ -170,25 +176,6 @@ int main()
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	// texture
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(RESOURCES_PATH"textures/brick.png", &width, &height, &nrChannels, 0);
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
-
 	while (!glfwWindowShouldClose(window))
 	{
 		// input
@@ -216,7 +203,7 @@ int main()
 
 		// clear
 		glClearColor(42.0f/255, 42.0f/255, 53.0f/255, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -225,6 +212,7 @@ int main()
 		// model matrix
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
 		model *= glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));
+		model *= glm::rotate(glm::mat4(1.0f), (float)glfwGetTime()*1.3f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		// view matrix
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
@@ -239,7 +227,7 @@ int main()
 		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -249,7 +237,6 @@ int main()
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
-	glDeleteTextures(1, &texture);
 
 	glfwTerminate();
 
