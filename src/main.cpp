@@ -59,51 +59,106 @@ int main()
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
 
-	// triangle coords
-	float vertices[] = {
-		// position           // color
-		-0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f
+	// pyramid
+	float pyramid_data[] = {
+		-0.5f, -0.5f, -0.5f, // 1
+		-0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f, // 2
+		 0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f, // 3
+		 0.0f,  0.5f,  0.0f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f, // 4
+		 0.0f,  0.5f,  0.0f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f, // 5
+		 0.0f,  0.5f,  0.0f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f, // 6
+		 0.0f,  0.5f,  0.0f,
+		-0.5f, -0.5f, -0.5f
 	};
 
-	unsigned int indices[] = {
-		0, 1, 4, 1, 5, 4, // bottom
-		2, 7, 3, 2, 6, 7, // top
-		0, 6, 2, 0, 4, 6, // front
-		1, 3, 7, 1, 5, 7, // back
-		0, 2, 3, 0, 3, 1, // left
-		4, 7, 6, 4, 5, 7  // right
-	};
+	unsigned int VAO_pyramid;
+	glGenVertexArrays(1, &VAO_pyramid);
+	glBindVertexArray(VAO_pyramid);
 
-	// vertex array
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	unsigned int VBO_pyramid;
+	glGenBuffers(1, &VBO_pyramid);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_pyramid);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramid_data), pyramid_data, GL_STATIC_DRAW);
 
-	// vertex buffer
-	unsigned int VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	// position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	// color
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
-	glEnableVertexAttribArray(1);
 
-	unsigned int EBO;
-	glCreateBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	// cube
+	float cube_data[] = {
+	    -0.5f, -0.5f, -0.5f,
+	     0.5f, -0.5f, -0.5f,
+	     0.5f,  0.5f, -0.5f,
+	     0.5f,  0.5f, -0.5f,
+	    -0.5f,  0.5f, -0.5f,
+	    -0.5f, -0.5f, -0.5f,
+	    -0.5f, -0.5f,  0.5f,
+	     0.5f, -0.5f,  0.5f,
+	     0.5f,  0.5f,  0.5f,
+	     0.5f,  0.5f,  0.5f,
+	    -0.5f,  0.5f,  0.5f,
+	    -0.5f, -0.5f,  0.5f,
+	    -0.5f,  0.5f,  0.5f,
+	    -0.5f,  0.5f, -0.5f,
+	    -0.5f, -0.5f, -0.5f,
+	    -0.5f, -0.5f, -0.5f,
+	    -0.5f, -0.5f,  0.5f,
+	    -0.5f,  0.5f,  0.5f,
+	     0.5f,  0.5f,  0.5f,
+	     0.5f,  0.5f, -0.5f,
+	     0.5f, -0.5f, -0.5f,
+	     0.5f, -0.5f, -0.5f,
+	     0.5f, -0.5f,  0.5f,
+	     0.5f,  0.5f,  0.5f,
+	    -0.5f, -0.5f, -0.5f,
+	     0.5f, -0.5f, -0.5f,
+	     0.5f, -0.5f,  0.5f,
+	     0.5f, -0.5f,  0.5f,
+	    -0.5f, -0.5f,  0.5f,
+	    -0.5f, -0.5f, -0.5f,
+	    -0.5f,  0.5f, -0.5f,
+	     0.5f,  0.5f, -0.5f,
+	     0.5f,  0.5f,  0.5f,
+	     0.5f,  0.5f,  0.5f,
+	    -0.5f,  0.5f,  0.5f,
+	    -0.5f,  0.5f, -0.5f
+	};
 
-	// read shaders
+	unsigned int VAO_cube;
+	glGenVertexArrays(1, &VAO_cube);
+	glBindVertexArray(VAO_cube);
+
+	unsigned int VBO_cube;
+	glGenBuffers(1, &VBO_cube);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_cube);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_data), cube_data, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// light source
+	unsigned int VAO_light;
+	glGenVertexArrays(1, &VAO_light);
+	glBindVertexArray(VAO_light);
+
+	unsigned int VBO_light;
+	glGenBuffers(1, &VBO_light);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_light);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_data), cube_data, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// lighting shader
 	std::string vertexCode;
 	std::string fragmentCode;
 	std::ifstream vShaderFile;
@@ -114,8 +169,8 @@ int main()
 	try
 	{
 		// open files
-		vShaderFile.open(RESOURCES_PATH"shaders/shader.vert");
-		fShaderFile.open(RESOURCES_PATH"shaders/shader.frag");
+		vShaderFile.open(RESOURCES_PATH"shaders/lighting.vert");
+		fShaderFile.open(RESOURCES_PATH"shaders/lighting.frag");
 		std::stringstream vShaderStream, fShaderStream;
 		// read file’s buffer contents into streams
 		vShaderStream << vShaderFile.rdbuf();
@@ -160,21 +215,87 @@ int main()
 		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 	};
 
-	// shader program
-	unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	unsigned int shaderProgramLighting = glCreateProgram();
+	glAttachShader(shaderProgramLighting, vertexShader);
+	glAttachShader(shaderProgramLighting, fragmentShader);
+	glLinkProgram(shaderProgramLighting);
 	// print linking errors if any
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	glGetProgramiv(shaderProgramLighting, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		glGetProgramInfoLog(shaderProgramLighting, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 	// delete shaders; they’re linked into our program and no longer necessary
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	// light source shader
+	std::string vertexCode2;
+	std::string fragmentCode2;
+	std::ifstream vShaderFile2;
+	std::ifstream fShaderFile2;
+	try
+	{
+		// open files
+		vShaderFile2.open(RESOURCES_PATH"shaders/light_source.vert");
+		fShaderFile2.open(RESOURCES_PATH"shaders/light_source.frag");
+		std::stringstream vShaderStream2, fShaderStream2;
+		// read file’s buffer contents into streams
+		vShaderStream2 << vShaderFile2.rdbuf();
+		fShaderStream2 << fShaderFile2.rdbuf();
+		// close file handlers
+		vShaderFile2.close();
+		fShaderFile2.close();
+		// convert stream into string
+		vertexCode2 = vShaderStream2.str();
+		fragmentCode2 = fShaderStream2.str();
+	}
+	catch (std::ifstream::failure e)
+	{
+		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+	}
+	const char* vShaderCode2 = vertexCode2.c_str();
+	const char* fShaderCode2 = fragmentCode2.c_str();
+
+	// create vertex shader
+	unsigned int vertexShader2 = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader2, 1, &vShaderCode2, NULL);
+	glCompileShader(vertexShader2);
+	// print compile errors if any
+	glGetShaderiv(vertexShader2, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(vertexShader2, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	};
+
+	// create fragment shader
+	unsigned int fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader2, 1, &fShaderCode2, NULL);
+	glCompileShader(fragmentShader2);
+	// print compile errors if any
+	glGetShaderiv(fragmentShader2, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(fragmentShader2, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+	};
+
+	unsigned int shaderProgramLightSource = glCreateProgram();
+	glAttachShader(shaderProgramLightSource, vertexShader2);
+	glAttachShader(shaderProgramLightSource, fragmentShader2);
+	glLinkProgram(shaderProgramLightSource);
+	// print linking errors if any
+	glGetProgramiv(shaderProgramLightSource, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		glGetProgramInfoLog(shaderProgramLightSource, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+	}
+	// delete shaders; they’re linked into our program and no longer necessary
+	glDeleteShader(vertexShader2);
+	glDeleteShader(fragmentShader2);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -205,38 +326,72 @@ int main()
 		glClearColor(42.0f/255, 42.0f/255, 53.0f/255, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glBindVertexArray(VAO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glUseProgram(shaderProgram);
+		// draw pyramid
+		glBindVertexArray(VAO_pyramid);
+		glUseProgram(shaderProgramLighting);
 
-		// model matrix
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
-		model *= glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(1.0f, 0.0f, 0.0f));
-		model *= glm::rotate(glm::mat4(1.0f), (float)glfwGetTime()*1.3f, glm::vec3(0.0f, 1.0f, 0.0f));
-
-		// view matrix
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-		// projection matrix
 		glm::mat4 proj = glm::perspective(glm::radians(70.0f), (float)SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
 
-		int uni_model = glGetUniformLocation(shaderProgram, "model");
-		int uni_view = glGetUniformLocation(shaderProgram, "view");
-		int uni_proj = glGetUniformLocation(shaderProgram, "proj");
+		glm::vec3 col(1.0, 1.0, 0.0);
+		int color_uni = glGetUniformLocation(shaderProgramLighting, "Color");
+		glUniform3f(color_uni, col.x, col.y, col.z);
+		int uni_model = glGetUniformLocation(shaderProgramLighting, "model");
+		int uni_view = glGetUniformLocation(shaderProgramLighting, "view");
+		int uni_proj = glGetUniformLocation(shaderProgramLighting, "proj");
 		glUniformMatrix4fv(uni_model, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
 
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 18);
+
+		// draw cube
+		glBindVertexArray(VAO_cube);
+		glUseProgram(shaderProgramLighting);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 2.0f));
+
+		col = glm::vec3(1.0, 0.0, 0.0);
+		color_uni = glGetUniformLocation(shaderProgramLighting, "Color");
+		glUniform3f(color_uni, col.x, col.y, col.z);
+		uni_model = glGetUniformLocation(shaderProgramLighting, "model");
+		uni_view = glGetUniformLocation(shaderProgramLighting, "view");
+		uni_proj = glGetUniformLocation(shaderProgramLighting, "proj");
+		glUniformMatrix4fv(uni_model, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		// draw light source
+		glUseProgram(shaderProgramLightSource);
+
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, 1.0f));
+		model *= glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		col = glm::vec3(1.0, 1.0, 1.0);
+		color_uni = glGetUniformLocation(shaderProgramLightSource, "lightColor");
+		glUniform3f(color_uni, col.x, col.y, col.z);
+		uni_model = glGetUniformLocation(shaderProgramLightSource, "model");
+		uni_view = glGetUniformLocation(shaderProgramLightSource, "view");
+		uni_proj = glGetUniformLocation(shaderProgramLightSource, "proj");
+		glUniformMatrix4fv(uni_model, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
-	glDeleteProgram(shaderProgram);
+	glDeleteVertexArrays(1, &VAO_pyramid);
+	glDeleteVertexArrays(1, &VAO_cube);
+	glDeleteBuffers(1, &VBO_pyramid);
+	glDeleteBuffers(1, &VBO_cube);
+	glDeleteProgram(shaderProgramLighting);
+	glDeleteProgram(shaderProgramLightSource);
 
 	glfwTerminate();
 
