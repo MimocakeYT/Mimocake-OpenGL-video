@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <array>
 #include <fstream>
 #include <sstream>
 
@@ -196,47 +197,47 @@ int main()
 	// cube
 	float cube_data[] = {
 		// positions          // normals           // texture coords
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  6.0f, 6.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 6.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  6.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  6.0f, 6.0f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 6.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  6.0f, 6.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  6.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  6.0f, 0.0f,
 		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 6.0f,
 
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  6.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 6.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 6.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  6.0f, 6.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  6.0f, 0.0f,
 
 		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  6.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  6.0f, 6.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  6.0f, 6.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 6.0f,
 		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  6.0f, 6.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 6.0f,
 		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
 		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  6.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  6.0f, 6.0f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  6.0f, 6.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 6.0f,
 		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
 		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  6.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  6.0f, 6.0f
 	};
 
 	unsigned int VAO_cube;
@@ -268,9 +269,9 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	unsigned int shaderProgramLighting = CreateShaderProgram(
+	unsigned int SPLighting = CreateShaderProgram(
 						RESOURCES_PATH"shaders/lighting.vert", RESOURCES_PATH"shaders/lighting.frag");
-	unsigned int shaderProgramLightSource = CreateShaderProgram(
+	unsigned int SPLightSource = CreateShaderProgram(
 				RESOURCES_PATH"shaders/light_source.vert", RESOURCES_PATH"shaders/light_source.frag");
 
 	unsigned int texture1 = CreateTexture(RESOURCES_PATH"textures/brick.png");
@@ -308,79 +309,100 @@ int main()
 		// draw pyramid
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glBindVertexArray(VAO_pyramid);
-		glUseProgram(shaderProgramLighting);
+		glUseProgram(SPLighting);
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.0f));
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		glm::mat4 proj = glm::perspective(glm::radians(70.0f), (float)SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
 
 		glm::vec3 ambient_light(0.15f, 0.15f, 0.15f);
-		glm::vec3 light_color(1.0f, 1.0f, 1.0f);
-		glm::vec3 light_pos(-1.0f, 1.0f, 1.0f);
+		glm::vec3 dir_light_col(0.4f, 0.4f, 0.4f);
+		glm::vec3 dir_light_dir(-2.0f, 1.0f, -0.5f);
 
-		glm::vec3 col(1.0, 1.0, 0.0);
-		int color_uni = glGetUniformLocation(shaderProgramLighting, "Color");
-		glUniform3f(color_uni, col.x, col.y, col.z);
-		int ambient_uni = glGetUniformLocation(shaderProgramLighting, "AmbientLight");
-		glUniform3f(ambient_uni, ambient_light.x, ambient_light.y, ambient_light.z);
-		int light_col_uni = glGetUniformLocation(shaderProgramLighting, "LightColor");
-		glUniform3f(light_col_uni, light_color.x, light_color.y, light_color.z);
-		int light_pos_uni = glGetUniformLocation(shaderProgramLighting, "LightPos");
-		glUniform3f(light_pos_uni, light_pos.x, light_pos.y, light_pos.z);
-		int camera_pos_uni = glGetUniformLocation(shaderProgramLighting, "CameraPos");
-		glUniform3f(camera_pos_uni, cameraPos.x, cameraPos.y, cameraPos.z);
-		int uni_model = glGetUniformLocation(shaderProgramLighting, "model");
-		int uni_view = glGetUniformLocation(shaderProgramLighting, "view");
-		int uni_proj = glGetUniformLocation(shaderProgramLighting, "proj");
-		glUniformMatrix4fv(uni_model, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
+		std::array<glm::vec3, 3> sl_col = { glm::vec3(0.0f, 0.0f, 1.5f), 
+											glm::vec3(0.0f, 1.5f, 0.0f),
+											glm::vec3(1.5f, 0.0f, 0.0f) };
+		std::array<glm::vec3, 3> sl_pos = { glm::vec3(1.0f, -2.0f, 1.5f),
+											glm::vec3(2.73f, 1.0f, 1.5f),
+											glm::vec3(-0.73f, 1.0f, 1.5f) };
+		std::array<glm::vec3, 3> sl_spot_dir = { glm::vec3(0.0f, 2.0f, 1.5f),
+												 glm::vec3(-1.73f, -1.0f, 1.5f),
+												 glm::vec3(1.73f, -1.0f, 1.5f) };
+		std::array<float, 3> sl_angle = { glm::cos(glm::radians(20.0)), glm::cos(glm::radians(20.0)), glm::cos(glm::radians(20.0)) };
+		std::array<float, 3> sl_outer_angle = { glm::cos(glm::radians(25.0)), glm::cos(glm::radians(25.0)), glm::cos(glm::radians(25.0)) };
+
+		std::array<glm::vec3, 3> pl_col = { glm::vec3(1.0f, 1.0f, 1.0f),
+											glm::vec3(1.0f, 0.0f, 0.7f),
+											glm::vec3(0.3f, 1.0f, 0.0f) };
+		std::array<glm::vec3, 3> pl_pos = { glm::vec3(0.7f, 1.0f, -3.2f),
+											glm::vec3(1.0f, 4.0f, 5.0f),
+											glm::vec3(0.0f, 4.0f, 6.0f) };
+
+		glUniform3f(glGetUniformLocation(SPLighting, "AmbientLight"), ambient_light.x, ambient_light.y, ambient_light.z);
+		glUniform3f(glGetUniformLocation(SPLighting, "dl.col"), dir_light_col.x, dir_light_col.y, dir_light_col.z);
+		glUniform3f(glGetUniformLocation(SPLighting, "dl.dir"), dir_light_dir.x, dir_light_dir.y, dir_light_dir.z);
+		for (int i = 0; i < 3; i++) {
+			std::string tmp = "sl[" + std::to_string(i) + "].col";
+			glUniform3f(glGetUniformLocation(SPLighting, tmp.c_str()), sl_col[i].x, sl_col[i].y, sl_col[i].z);
+			tmp = "sl[" + std::to_string(i) + "].pos";
+			glUniform3f(glGetUniformLocation(SPLighting, tmp.c_str()), sl_pos[i].x, sl_pos[i].y, sl_pos[i].z);
+			tmp = "sl[" + std::to_string(i) + "].spotDir";
+			glUniform3f(glGetUniformLocation(SPLighting, tmp.c_str()), sl_spot_dir[i].x, sl_spot_dir[i].y, sl_spot_dir[i].z);
+			tmp = "sl[" + std::to_string(i) + "].angle";
+			glUniform1f(glGetUniformLocation(SPLighting, tmp.c_str()), sl_angle[i]);
+			tmp = "sl[" + std::to_string(i) + "].outerAngle";
+			glUniform1f(glGetUniformLocation(SPLighting, tmp.c_str()), sl_outer_angle[i]);
+
+			tmp = "pl[" + std::to_string(i) + "].col";
+			glUniform3f(glGetUniformLocation(SPLighting, tmp.c_str()), pl_col[i].x, pl_col[i].y, pl_col[i].z);
+			tmp = "pl[" + std::to_string(i) + "].pos";
+			glUniform3f(glGetUniformLocation(SPLighting, tmp.c_str()), pl_pos[i].x, pl_pos[i].y, pl_pos[i].z);
+		}
+		glUniform3f(glGetUniformLocation(SPLighting, "CameraPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+		glUniformMatrix4fv(glGetUniformLocation(SPLighting, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(SPLighting, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1.5f));
+		model *= glm::scale(glm::mat4(1.0f), glm::vec3(2.0f));
+		glUniformMatrix4fv(glGetUniformLocation(SPLighting, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glDrawArrays(GL_TRIANGLES, 0, 18);
 
 		// draw cube
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glBindVertexArray(VAO_cube);
-		glUseProgram(shaderProgramLighting);
+		glUseProgram(0);
+		glUseProgram(SPLighting);
 
-		model = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 2.0f));
+		model = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 6.0f));
+		model *= glm::scale(glm::mat4(1.0f), glm::vec3(6.0f));
 
-		col = glm::vec3(1.0, 0.0, 0.0);
-		color_uni = glGetUniformLocation(shaderProgramLighting, "Color");
-		glUniform3f(color_uni, col.x, col.y, col.z);
-		ambient_uni = glGetUniformLocation(shaderProgramLighting, "AmbientLight");
-		glUniform3f(ambient_uni, ambient_light.x, ambient_light.y, ambient_light.z);
-		light_col_uni = glGetUniformLocation(shaderProgramLighting, "LightColor");
-		glUniform3f(light_col_uni, light_color.x, light_color.y, light_color.z);
-		light_pos_uni = glGetUniformLocation(shaderProgramLighting, "LightPos");
-		glUniform3f(light_pos_uni, light_pos.x, light_pos.y, light_pos.z);
-		camera_pos_uni = glGetUniformLocation(shaderProgramLighting, "CameraPos");
-		glUniform3f(camera_pos_uni, cameraPos.x, cameraPos.y, cameraPos.z);
-		uni_model = glGetUniformLocation(shaderProgramLighting, "model");
-		uni_view = glGetUniformLocation(shaderProgramLighting, "view");
-		uni_proj = glGetUniformLocation(shaderProgramLighting, "proj");
-		glUniformMatrix4fv(uni_model, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
+		glUniformMatrix4fv(glGetUniformLocation(SPLighting, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// draw light source
-		glUseProgram(shaderProgramLightSource);
+		glUseProgram(SPLightSource);
 
-		model = glm::translate(glm::mat4(1.0f), light_pos);
+		model = glm::translate(glm::mat4(1.0f), sl_pos[0]);
 		model *= glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-		color_uni = glGetUniformLocation(shaderProgramLightSource, "lightColor");
-		glUniform3f(color_uni, light_color.x, light_color.y, light_color.z);
-		uni_model = glGetUniformLocation(shaderProgramLightSource, "model");
-		uni_view = glGetUniformLocation(shaderProgramLightSource, "view");
-		uni_proj = glGetUniformLocation(shaderProgramLightSource, "proj");
-		glUniformMatrix4fv(uni_model, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(uni_view, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(uni_proj, 1, GL_FALSE, glm::value_ptr(proj));
+		glUniformMatrix4fv(glGetUniformLocation(SPLightSource, "view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(glGetUniformLocation(SPLightSource, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
 
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (int i = 0; i < 3; i++) {
+			model = glm::translate(glm::mat4(1.0f), sl_pos[i]);
+			model *= glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+			glUniform3f(glGetUniformLocation(SPLightSource, "lightColor"), sl_col[i].x, sl_col[i].y, sl_col[i].z);
+			glUniformMatrix4fv(glGetUniformLocation(SPLightSource, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+		for (int i = 0; i < 3; i++) {
+			model = glm::translate(glm::mat4(1.0f), pl_pos[i]);
+			model *= glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+			glUniform3f(glGetUniformLocation(SPLightSource, "lightColor"), pl_col[i].x, pl_col[i].y, pl_col[i].z);
+			glUniformMatrix4fv(glGetUniformLocation(SPLightSource, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -390,8 +412,8 @@ int main()
 	glDeleteVertexArrays(1, &VAO_cube);
 	glDeleteBuffers(1, &VBO_pyramid);
 	glDeleteBuffers(1, &VBO_cube);
-	glDeleteProgram(shaderProgramLighting);
-	glDeleteProgram(shaderProgramLightSource);
+	glDeleteProgram(SPLighting);
+	glDeleteProgram(SPLightSource);
 
 	glfwTerminate();
 
